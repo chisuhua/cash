@@ -17,6 +17,7 @@ set(SOURCE_FILES
     hof.cpp
     htl.cpp
     float.cpp
+    ufloat.cpp
     udf.cpp
     fixed.cpp
     complex.cpp        

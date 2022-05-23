@@ -103,6 +103,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE -pedantic -Werror -Wall -Wextra)
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>    
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/soft-ieee754/includes>    
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/core 
             ${CMAKE_CURRENT_SOURCE_DIR}/src/ast 
             ${CMAKE_CURRENT_SOURCE_DIR}/src/compiler 

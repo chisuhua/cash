@@ -34,12 +34,12 @@ static bool IsUseBeforeDef(lnodeimpl* node, const lnodeimpl* use) {
 static bool is_inline_literal(lnodeimpl* node) {
   assert(type_lit == node->type());
   return (node->size() <= 64);
-};
+}
 
 static auto DataWidth(lnodeimpl* node) {
   auto type = node->type();
   return (type_mem == type) ? reinterpret_cast<memimpl*>(node)->data_width() : node->size();
-};
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

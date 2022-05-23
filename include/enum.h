@@ -16,7 +16,7 @@ void registerEnumString(const lnode& node, void* callback);
 #define CH_ENUM_VALUE(a, i, x) CH_ENUM_VALUE_(CH_NARG(CH_REM x))(CH_REM x, i)
 
 #define CH_ENUM_SIZE(...) \
-  log2up(std::max({1, CH_FOR_EACH(CH_ENUM_VALUE, , CH_SEP_COMMA, __VA_ARGS__)}) + 1)
+    ch::internal::log2up(std::max({1, CH_FOR_EACH(CH_ENUM_VALUE, , CH_SEP_COMMA, __VA_ARGS__)}) + 1)
 
 #define CH_ENUM_FIELD_1(x, y) y
 #define CH_ENUM_FIELD_2(x, y) CH_PAIR_FIRST(x) = CH_PAIR_SECOND(x)
@@ -95,7 +95,7 @@ void registerEnumString(const lnode& node, void* callback);
       CH_FOR_EACH(CH_ENUM_FIELD, , CH_SEP_COMMA, __VA_ARGS__) \
       , __MAX_VALUE__ \
     }; \
-    static_assert(log2floor<int>(__MAX_VALUE__) <= size, "size mismatch"); \
+    static_assert(ch::internal::log2floor<int>(__MAX_VALUE__) <= size, "size mismatch"); \
     static const char* to_string(type value) { \
       switch (value) { \
       CH_FOR_EACH(CH_ENUM_STRING, , CH_SEP_SEMICOLON, __VA_ARGS__); \
@@ -108,7 +108,7 @@ void registerEnumString(const lnode& node, void* callback);
       return buffer_; \
     } \
     ch::internal::logic_buffer buffer_; \
-    void do_print(ch_ostream& __out) const { \
+    void do_print(ch::internal::ch_ostream& __out) const { \
       __out.write(ch::internal::get_lnode(*this), 'e'); \
     } \
     friend class ch::internal::logic_accessor; \
