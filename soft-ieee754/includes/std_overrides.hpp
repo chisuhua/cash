@@ -17,10 +17,12 @@ namespace std {
 	template <unsigned M, unsigned E, unsigned TF, int B >
 	struct numeric_limits<IEEE754<M, E, TF, B > > {
 		public:
+            using ufloat_t = IEEE754<M, E, TF, B>;
+			using primitive = typename ufloat_t::primitive;
 			static constexpr bool is_specialized = true;
 
-			static IEEE754<M, E, TF, B > min()			{ return from_components(+1,  0); }
-			static IEEE754<M, E, TF, B > max()			{ return from_components(-2, -1); }
+			static ufloat_t min()	{ return ufloat_t::from_components(0, +1,  0); }
+			static ufloat_t max()	{ return ufloat_t::from_components(0, -2, -1); }
 
 			static constexpr int digits = M + 1;
 			static constexpr int digits10 = M * M_LOG10E / M_LOG2E;
@@ -29,8 +31,8 @@ namespace std {
 			static constexpr bool is_exact = false;
 			static constexpr int radix = 2;
 
-			static IEEE754<M, E, TF, B > epsilon()		{ return from_components(B - M, 0); }
-			static IEEE754<M, E, TF, B > round_error()	{ return 0.5f; }
+			static ufloat_t epsilon()		{ return ufloat_t::from_components(0, B - M, 0); }
+			static ufloat_t round_error()	{ return 0.5f; }
 
 			static constexpr int min_exponent = -B + 2;
 			static constexpr int max_exponent =  B + 1;
@@ -43,11 +45,11 @@ namespace std {
 			static constexpr float_denorm_style has_denorm = denorm_present;
 			static constexpr bool has_denorm_loss = false;
 
-			static IEEE754<M, E, TF, B > infinity()		{ return from_components(-1,  0); }
-			static IEEE754<M, E, TF, B > quiet_NaN()	{ return from_components(-1, +1); }
-			static IEEE754<M, E, TF, B > signaling_NaN(){ return from_components(-1, +1); }
-			static IEEE754<M, E, TF, B > denorm_min()	{ return from_components( 0, +1); }
-			static IEEE754<M, E, TF, B > zero()	{ return from_components( 0, 0); }
+			static ufloat_t infinity(primitive sign=0) { return ufloat_t::from_components(sign, -1, 0); }
+			static ufloat_t quiet_NaN()	    { return ufloat_t::from_components(0, -1, +1); }
+			static ufloat_t signaling_NaN() { return ufloat_t::from_components(0, -1, +1); }
+			static ufloat_t denorm_min()	{ return ufloat_t::from_components(0, 0, +1); }
+			static ufloat_t zero(primitive sign=0) { return ufloat_t::from_components(sign, 0, 0);}
 
 			static constexpr bool is_iec559 = has_infinity && has_quiet_NaN && has_denorm == denorm_present;
 			static constexpr bool is_bounded = true;
@@ -57,16 +59,17 @@ namespace std {
 			static constexpr bool tinyness_before = false;
 			static constexpr float_round_style round_style = round_to_nearest;
 
+#if 0
 		private:
 			typedef typename IEEE754<M, E, TF, B >::primitive primitive;
-
-			inline static IEEE754<M, E, TF, B > from_components(primitive exponent, primitive mantissa) {
+			inline static IEEE754<M, E, TF, B > from_components(primitive exponent, primitive mantissa, primitive sign = 0) {
 				IEEE754<M, E, TF, B > result;
 				result.comp.mantissa	= mantissa;
 				result.comp.exponent	= exponent;
-				result.comp.sign = 0;
+				result.comp.sign = sign;
 				return result;
 			}
+#endif
 	};
 
 	// --------------------------- Classification --------------------------- //

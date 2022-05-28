@@ -511,7 +511,7 @@ public:
   }
 
 private:
-  detail::sc_pipereg<float> pipe_;
+  detail::sc_pipereg<ufloat_t> pipe_;
 };
 
 template <unsigned M, unsigned E, unsigned TF=0>
@@ -546,7 +546,7 @@ public:
   }
 
 private:
-  detail::sc_pipereg<float> pipe_;
+  detail::sc_pipereg<ufloat_t> pipe_;
 };
 
 template <unsigned M, unsigned E, unsigned TF=0>
@@ -585,7 +585,7 @@ public:
   }
 
 private:
-  detail::sc_pipereg<float> pipe_;
+  detail::sc_pipereg<ufloat_t> pipe_;
 };
 
 template <unsigned M, unsigned E, unsigned TF=0>
@@ -624,7 +624,38 @@ public:
   }
 
 private:
-  detail::sc_pipereg<float> pipe_;
+  detail::sc_pipereg<ufloat_t> pipe_;
+};
+
+template <unsigned M, unsigned E, unsigned TF=0>
+class _ufSfu {
+public:
+  using ufloat_t = IEEE754<M, E, TF>;
+  __sio (
+    __in (ch_bool)     en,
+    __in (ch_float<M, E, TF>)  lhs,
+    __in (ch_float<M, E, TF>)  rhs,
+    __out (ch_float<M, E, TF>) dst
+  );
+
+  _ufSfu(unsigned delay) : pipe_(delay) {}
+
+  void eval() {
+    auto lhs = static_cast<ufloat_t>(io.lhs);
+    auto rhs = static_cast<ufloat_t>(io.rhs);
+    io.dst = pipe_.eval(lhs * rhs, !!io.en);
+  }
+
+  void reset() {
+    pipe_.reset();
+  }
+
+  bool to_verilog(udf_vostream& out, udf_verilog mode) {
+    return false;
+  }
+
+private:
+  detail::sc_pipereg<ufloat_t> pipe_;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

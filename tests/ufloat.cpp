@@ -19,7 +19,7 @@ namespace {
       auto c = ufmul<M, N, TF, Delay>(b, io.lhs);
       auto d = ufmul<M, N, TF, Delay>(c, a);
       io.out = d;
-      //ch_println("{0}: clk={1}, rst={2}, a={3}, b={4}, c={5}, d={6}", ch_now(), ch_clock(), ch_reset(), a, b, c, d);
+      ch_println("{0}: clk={1}, rst={2}, a={3}, b={4}, c={5}, d={6}", ch_now(), ch_clock(), ch_reset(), a, b, c, d);
     }
   };
 }
@@ -272,19 +272,17 @@ TEST_CASE("ufloat", "[ufloat]") {
     });
   }
 
-/*
   SECTION("verilog", "[verilog]") {
     TESTX([]()->bool {
-      ch_device<FMultTest<M, E, 2>> device;
+      ch_device<FMultTest<M, E, 0, 2>> device;
       device.io.lhs = 0.5f;
       device.io.rhs = 0.5f;
       ch_simulator sim(device);
       sim.run(2*(2+2*2*4));
-      ch_toVerilog("fmultest.v", device);
+      // ch_toVerilog("fmultest.v", device);
       float ret(device.io.out);
       //std::cout << "ret=" << ret << std::endl;
       return (0.25f == ret);
     });
   }
-*/
 }
