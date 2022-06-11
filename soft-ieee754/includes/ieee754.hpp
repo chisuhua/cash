@@ -340,6 +340,16 @@ class IEEE754 {
         }
 
         /**
+         * Conversion from another IEEE floating point object
+         */
+        template <unsigned OM, unsigned OE, unsigned OTF, int OB >
+        IEEE754(IEEE754<OM, OE, OB > &&other_ieee754) {
+            comp.sign = other_ieee754.sign;
+            comp.exponent = other_ieee754.comp.exponent ? other_ieee754.comp.exponent - OB + B : 0;
+            comp.mantissa = shift(other_ieee754.comp.mantissa, M - OM);
+        }
+
+        /**
          * Conversion from a floating point value
          */
         template <
@@ -404,7 +414,7 @@ class IEEE754 {
             typename T,
             typename = typename std::enable_if<std::is_floating_point<T >::value, T >::type
         >
-        operator T() const {
+        explicit operator T() const {
             T result;
             if(comp.exponent != EXPONENT_MASK) {
                 result = std::ldexp(real_mantissa() / T(1 << M), comp.exponent - B);
@@ -426,7 +436,7 @@ class IEEE754 {
             typename = typename std::enable_if<!std::is_floating_point<T >::value, T >::type,
             typename = typename std::enable_if< std::is_signed<T >::value, T >::type
         >
-        operator T() const {
+        explicit operator T() const {
             return to_signed<T >();
         }
 
@@ -439,7 +449,7 @@ class IEEE754 {
             typename = typename std::enable_if<!std::is_signed<T >::value, T >::type,
             typename = typename std::enable_if< std::is_unsigned<T >::value, T >::type
         >
-        operator T() const {
+        explicit operator T() const {
             return to_unsigned<T >();
         }
 
@@ -479,6 +489,13 @@ class IEEE754 {
                     return rhs;
 
                 return std::numeric_limits<IEEE754>::quiet_NaN();
+            }
+            if(std::iszero(lhs) || std::iszero(rhs)) {
+                if(!(std::iszero(rhs)))
+                    return rhs;
+                if(!(std::iszero(lhs)))
+                    return lhs;
+                return std::numeric_limits<IEEE754>::zero();
             }
 
             int exp = std::min(lhs.comp.exponent - B, rhs.comp.exponent - B) - M;

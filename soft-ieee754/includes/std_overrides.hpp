@@ -104,6 +104,14 @@ namespace std {
 	 */
 	template <unsigned M, unsigned E, unsigned TF, int B >
 	bool iszero(const IEEE754<M, E, TF, B > &arg) {
+		if ((arg.comp.exponent == 0) && (arg.comp.mantissa == 0))
+            return true;
+        return false;
+		//return (arg.comp.exponent == 0) && (arg.comp.mantissa == 0);
+	}
+
+	template <unsigned M, unsigned E, unsigned TF, int B >
+	bool isZero(const IEEE754<M, E, TF, B > &arg) {
 		return (arg.comp.exponent == 0) && (arg.comp.mantissa == 0);
 	}
 

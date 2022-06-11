@@ -4,6 +4,11 @@
 #include <math.h>
 #include "ieee754.hpp"
 
+#define FP8  ch_float<4, 3, 0>
+#define FP16 ch_float<10, 5, 0>
+#define FP32 ch_float<23, 8, 0>
+#define FP64 ch_float<52, 11, 0>
+
 namespace ch {
 namespace htl {
 using namespace logic;
@@ -235,6 +240,9 @@ class ch_float : public ch_numbase<ch_float<M, E, TF>> {
 public:
   using ufloat_t = IEEE754<M, E, TF>;
   using uprimitive_t = typename ufloat_t::primitive;
+  static constexpr unsigned M_ = M;
+  static constexpr unsigned E_ = E;
+  static constexpr unsigned TF_ = TF;
   static constexpr unsigned N = ufloat_t::BITS;
   using traits = logic_traits<N, true, ch_float, ch_sfloat<M, E, TF>>;
   using base = ch_numbase<ch_float<M, E, TF>>;
@@ -495,7 +503,8 @@ public:
   void eval() {
     auto lhs = static_cast<ufloat_t>(io.lhs);
     auto rhs = static_cast<ufloat_t>(io.rhs);
-    io.dst = pipe_.eval(lhs + rhs, !!io.en);
+    // io.dst = pipe_.eval(lhs + rhs, !!io.en);
+    io.dst = lhs + rhs;
   }
 
   void reset() {
@@ -530,7 +539,8 @@ public:
   void eval() {
     auto lhs = static_cast<ufloat_t>(io.lhs);
     auto rhs = static_cast<ufloat_t>(io.rhs);
-    io.dst = pipe_.eval(lhs - rhs, !!io.en);
+    // io.dst = pipe_.eval(lhs - rhs, !!io.en);
+    io.dst = lhs - rhs;
   }
 
   void reset() {
@@ -565,7 +575,8 @@ public:
   void eval() {
     auto lhs = static_cast<ufloat_t>(io.lhs);
     auto rhs = static_cast<ufloat_t>(io.rhs);
-    io.dst = pipe_.eval(lhs * rhs, !!io.en);
+    // io.dst = pipe_.eval(lhs * rhs, !!io.en);
+    io.dst = lhs * rhs;
   }
 
   void reset() {
@@ -604,7 +615,8 @@ public:
   void eval() {
     auto lhs = static_cast<ufloat_t>(io.lhs);
     auto rhs = static_cast<ufloat_t>(io.rhs);
-    io.dst = pipe_.eval(lhs / rhs, !!io.en);
+    //io.dst = pipe_.eval(lhs / rhs, !!io.en);
+    io.dst = lhs / rhs;
   }
 
   void reset() {
@@ -818,6 +830,7 @@ auto ch_float<M, E>::do_mod(const U& other) const {
 template <unsigned M, unsigned E, unsigned TF=0, unsigned Delay = 1>
 auto ufadd(const ch_float<M, E, TF>& lhs, const ch_float<M, E, TF>& rhs, const ch_bool& enable = true, CH_SRC_INFO) {
   ch_udf_seq<_ufAdd<M, E, TF>> udf(Delay, srcinfo);
+  // ch_udf_comb<cfSub<M,E,TF>> udf;
   udf.io.en  = enable;
   udf.io.lhs = lhs;
   udf.io.rhs = rhs;
